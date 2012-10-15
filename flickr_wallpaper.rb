@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # Chooses a photo from the current interesting
 # photo and set it as the background image on
 # your first KDE desktop.
@@ -14,7 +14,17 @@ FlickRaw.shared_secret ='05efc23236fe439f'
 FlickRaw.proxy = ENV['http_proxy']
 
 #list = flickr.interestingness.getList
-list = flickr.photos.search :tags => 'nature', :sort => 'interestingness-desc', :per_page => 100, :page => rand(100)
+#tags = "modern,architecture"
+#tags = "nasa"
+#tags = "landscapes"
+#tags = "flickrstruereflection1"
+#tags = "mexico,tourism"
+#tags = "travel"
+#tags = "europe"
+#tags = "matrix"
+tags = "australia"
+
+list = flickr.photos.search :tags => tags, :sort => 'interestingness-desc', :per_page => 10, :page => rand(100)
 photo = list[rand(list.size)]
 sizes = flickr.photos.getSizes(:photo_id => photo.id)
 choice = sizes.find {|s| s.label == 'Original' }
