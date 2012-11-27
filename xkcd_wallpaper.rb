@@ -6,19 +6,14 @@
 require 'rubygems'
 require 'RMagick'
 require 'open-uri'
-
-if blacklist = (ARGV[0] == 'blacklist')
-  File.open("#{ENV['HOME']}/.xkcd_blacklist", "a") do |f|
-    f.puts(File.read("/tmp/current_xkcd_url"))
-  end
-end
+require File.join(File.dirname(__FILE__), 'blacklist')
 
 #url = open("http://dynamic.xkcd.com/random/comic") { |remote| m=remote.read.match(/\<img *src=['"]([^'"]*)['"]/); m[1] }
 #url = open("http://dynamic.xkcd.com/random/comic") { |remote| m=remote.read.match(/Image URL[^:]*: (.*)/); m[1] }
 while true do
   page = open("http://dynamic.xkcd.com/random/comic") { |remote| remote.read }
-  url = page.match(/Image URL[^:]*: (.*)/)[1] 
-  break if (File.read("#{ENV['HOME']}/.xkcd_blacklist").match(url)).nil?
+  $url = page.match(/Image URL[^:]*: (.*)/)[1] 
+  break Blacklist.blacklisted? $url
 end
 title = page.match(/<div id="ctitle">(.*)<\/div>/)[1] 
 caption = page.match(/<img src=.*title="([^"]*)"/)[1] 
@@ -37,13 +32,14 @@ screen_width = 1250
 screen_height = 850
 overlay_scale = 0.3
 offset = 30
-xkcd_image = Magick::ImageList.new url
+xkcd_image = Magick::ImageList.new $url
 resized = xkcd_image.resize_to_fit(screen_width,screen_height)
 #resized[:caption] = "#{title}\n#{caption}"
 #resized = resized.polaroid(0) {
   #self.border_color = 'white'
 #}
 resized.border!(5,5, 'white')
+#resized = resized.blur_image
 
 wp.composite!(resized, (screen_width - resized.columns)/2 + 15, (screen_height - resized.rows)/2 + 30, Magick::AtopCompositeOp)
 #wp.composite!(resized, (screen_width - resized.columns)/2, (screen_height - resized.rows)/2, Magick::AtopCompositeOp)
@@ -78,10 +74,3 @@ lines.each_with_index do |l, i|
 end
 
 wp.write file
-
-File.open("/tmp/current_xkcd_url", "w") do |f|
-  f.write url
-end
-wp_file = "/home/george/utility-scripts/xkcd.xml"
-system("touch #{wp_file}")
-system("gsettings set org.gnome.desktop.background picture-uri file://#{wp_file}") if blacklist
