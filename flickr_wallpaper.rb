@@ -41,13 +41,16 @@ wp = Magick::ImageList.new(background)
 
 screen_width = 1280
 screen_height = 1024
-overlay_scale = 0.3
+overlay_scale = 0.4
 offset = 30
 flickr_image = Magick::ImageList.new $url
 resized = flickr_image.resize_to_fit(screen_width,screen_height)
 wp.composite!(resized, (screen_width - resized.columns)/2, (screen_height - resized.rows)/2, Magick::AtopCompositeOp)
-katkam_image = Magick::ImageList.new "http://katkam.ca/pic.aspx" 
-scaled = katkam_image.scale(overlay_scale)
+cam = "http://cam.westinbayshore.com/cam_img/pic.jpg"
+#cam = "http://cam.westinbayshore.com/cam_img/view_live1.jpg"
+#cam = "http://katkam.ca/pic.aspx" 
+image = Magick::ImageList.new cam
+scaled = image.scale(overlay_scale)
 wp.composite!(scaled, screen_width - scaled.columns - offset, screen_height - scaled.rows - offset, Magick::AtopCompositeOp)
 wp.write file
 

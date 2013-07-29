@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), 'blacklist')
+$: << File.dirname(__FILE__)
+require 'blacklist'
 
 wp_type = 'flickr'
 load "#{ENV['HOME']}/ruby/#{wp_type}_wallpaper.rb"
