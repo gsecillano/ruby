@@ -40,7 +40,9 @@ background = "#{ENV['HOME']}/Pictures/backgrounds/Leather-Hole-sPlain.png"
 wp = Magick::ImageList.new(background)
 
 screen_width = 1280
-screen_height = 1024
+screen_height = 900
+#screen_width = 1280
+#screen_height = 1024
 overlay_scale = 0.4
 offset = 30
 flickr_image = Magick::ImageList.new $url
