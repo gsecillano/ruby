@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    flickraw (0.9.8)
+    rmagick (2.13.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  flickraw
+  rmagick
