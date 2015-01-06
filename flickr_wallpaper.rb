@@ -13,8 +13,9 @@ FlickRaw.shared_secret ='05efc23236fe439f'
 FlickRaw.proxy = ENV['http_proxy']
 
 while true do
-  list = flickr.interestingness.getList
-  #tags = "modern,architecture"
+  #list = flickr.interestingness.getList
+
+  tags = "modern,architecture"
   #tags = "nasa"
   #tags = "landscapes"
   #tags = "flickrstruereflection1"
@@ -22,18 +23,26 @@ while true do
   #tags = "travel"
   #tags = "europe"
   #tags = "matrix"
-  tags = "australia"
+  #tags = "australia"
+  #tags = "sochi 2014"
+  list = flickr.photos.search :tags => tags, :sort => 'interestingness-desc', :per_page => 10, :page => rand(100)
 
-  #list = flickr.photos.search :tags => tags, :sort => 'interestingness-desc', :per_page => 10, :page => rand(100)
   photo = list[rand(list.size)]
   sizes = flickr.photos.getSizes(:photo_id => photo.id)
   choice = sizes.find {|s| s.label == 'Original' }
   choice = sizes.find {|s| s.label == 'Large' } unless choice
 
+  next unless choice
+
   $url = choice.source
   break unless Blacklist.blacklisted? $url
 end
-file = "#{ENV['HOME']}/Pictures/backgrounds/bg_image"
+wp_folder = "#{ENV['HOME']}/Pictures/backgrounds/wp"
+list = Dir["#{wp_folder}/*"]
+if list.size > 2
+  File.unlink(list.first)
+end
+file = "#{wp_folder}/#{Time.now.to_i}.png"
 full_path = File.join(Dir.pwd, file)
 
 background = "#{ENV['HOME']}/Pictures/backgrounds/Leather-Hole-sPlain.png"
