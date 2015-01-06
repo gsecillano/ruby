@@ -57,7 +57,8 @@ offset = 30
 flickr_image = Magick::ImageList.new $url
 resized = flickr_image.resize_to_fit(screen_width,screen_height)
 wp.composite!(resized, (screen_width - resized.columns)/2, (screen_height - resized.rows)/2, Magick::AtopCompositeOp)
-cam = "http://cam.westinbayshore.com/cam_img/pic.jpg"
+cam = "http://webcam.westinbayshore.com/the-westin-bayshore-vancouver.jpg"
+#cam = "http://cam.westinbayshore.com/cam_img/pic.jpg"
 #cam = "http://cam.westinbayshore.com/cam_img/view_live1.jpg"
 #cam = "http://katkam.ca/pic.aspx" 
 image = Magick::ImageList.new cam
