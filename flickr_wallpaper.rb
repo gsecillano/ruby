@@ -3,6 +3,7 @@
 # photo and set it as the background image on
 # your first KDE desktop.
 
+require 'fileutils'
 require 'rubygems'
 require 'flickraw'
 require 'RMagick'
@@ -15,9 +16,9 @@ FlickRaw.proxy = ENV['http_proxy']
 while true do
   #list = flickr.interestingness.getList
 
-  tags = "modern,architecture"
+  #tags = "modern,architecture"
   #tags = "nasa"
-  #tags = "landscapes"
+  tags = "landscapes"
   #tags = "flickrstruereflection1"
   #tags = "mexico,tourism"
   #tags = "travel"
@@ -26,7 +27,6 @@ while true do
   #tags = "australia"
   #tags = "sochi 2014"
   list = flickr.photos.search :tags => tags, :sort => 'interestingness-desc', :per_page => 10, :page => rand(100)
-
   photo = list[rand(list.size)]
   sizes = flickr.photos.getSizes(:photo_id => photo.id)
   choice = sizes.find {|s| s.label == 'Original' }
@@ -37,25 +37,30 @@ while true do
   $url = choice.source
   break unless Blacklist.blacklisted? $url
 end
-wp_folder = "#{ENV['HOME']}/Pictures/backgrounds/wp"
-list = Dir["#{wp_folder}/*"]
-if list.size > 2
-  File.unlink(list.first)
-end
-file = "#{wp_folder}/#{Time.now.to_i}.png"
+
+bgdir = "#{ENV['HOME']}/Pictures/backgrounds"
+fname = if File.mtime("#{bgdir}/bg_image") < File.mtime("#{bgdir}/bg_image1") 
+          "bg_image" 
+        else
+          "bg_image1"
+        end
+file = "#{ENV['HOME']}/Pictures/backgrounds/#{fname}"
 full_path = File.join(Dir.pwd, file)
 
-background = "#{ENV['HOME']}/Pictures/backgrounds/Leather-Hole-sPlain.png"
-wp = Magick::ImageList.new(background)
+#background = "#{ENV['HOME']}/Pictures/backgrounds/Leather-Hole-sPlain.png"
+background = "#{ENV['HOME']}/Pictures/backgrounds/Leather-Hole-sPlain-1920x1200.png"
 
-screen_width = 1280
-screen_height = 900
+#screen_width = 1920
+#screen_height = 1200
 #screen_width = 1280
-#screen_height = 1024
+#screen_height = 900
+screen_width = 1280
+screen_height = 1024
 overlay_scale = 0.4
 offset = 30
+wp = Magick::ImageList.new(background).resize_to_fill(screen_width,screen_height)
 flickr_image = Magick::ImageList.new $url
-resized = flickr_image.resize_to_fit(screen_width,screen_height)
+resized = flickr_image.resize_to_fill(screen_width,screen_height)
 wp.composite!(resized, (screen_width - resized.columns)/2, (screen_height - resized.rows)/2, Magick::AtopCompositeOp)
 cam = "http://webcam.westinbayshore.com/the-westin-bayshore-vancouver.jpg"
 #cam = "http://cam.westinbayshore.com/cam_img/pic.jpg"
